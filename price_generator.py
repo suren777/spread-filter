@@ -35,14 +35,6 @@ def dn(a, l, sig, k, T, c1, c2, c3, c4, t0=0):
     )
 
 
-# def xtdt(x0, alpha, lmbd, sigma, kappa, dt):
-#     var = sigma * sigma / (2 * kappa) * (1 - np.exp(-2 * kappa * dt))
-#     mean = x0 * np.exp(-kappa * dt) + (alpha - lmbd * sigma) / kappa * (
-#         1 - np.exp(-kappa * dt)
-#     )
-#     return np.random.normal(mean, var)
-
-
 def xtdt(x0, a, sig, k, dt, w):
     return B(k, dt) * x0 + g(a, k, dt) + np.sqrt(R(sig, k, dt) * dt) * w
 

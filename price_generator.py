@@ -31,7 +31,7 @@ def dn(a, l, sig, k, T, c1, c2, c3, c4, t0=0):
     ) + sig * sig * 0.25 / k * (
         1 - np.exp(-2 * k * (T - t0))
     ) * seasonality_function(
-        T, c1, c2, c3, c4
+        T - t0, c1, c2, c3, c4
     )
 
 
@@ -52,9 +52,24 @@ def calendar_spread(spot, T1, T2, k, a, l, sig, eta, c1, c2, c3, c4, q_noise):
 
 
 def generate_futures_path(
-    x0, a, l, sig, k, dt, Tn, c1, c2, c3, c4, eta, n_steps=100
+    x0,
+    a,
+    l,
+    sig,
+    k,
+    dt,
+    Tn,
+    c1,
+    c2,
+    c3,
+    c4,
+    eta,
+    n_steps=100,
+    rolling=True,
+    seed=42,
 ):
     n_fut = len(Tn)
+    np.random.seed(seed)
     wiener = np.random.normal(size=n_steps)
     q = np.random.normal(size=(n_fut, n_steps))
     spot = np.zeros(shape=n_steps + 1)
@@ -66,17 +81,33 @@ def generate_futures_path(
         futures[:, i] = log_futures(
             spot[i], T, k, a, l, sig, eta, c1, c2, c3, c4, q[:, i]
         )
-        for i, t in enumerate(list(T)):
-            if T[i] - dt >= 0:
-                T[i] -= dt
-            else:
-                T[i] = Tn[i]
+        if not rolling:
+            for i, t in enumerate(list(T)):
+                if T[i] - dt >= 0:
+                    T[i] -= dt
+                else:
+                    T[i] = Tn[i]
     return spot, futures
 
 
 def generate_spread_path(
-    x0, a, l, sig, k, dt, Tn, c1, c2, c3, c4, eta, n_steps=100
+    x0,
+    a,
+    l,
+    sig,
+    k,
+    dt,
+    Tn,
+    c1,
+    c2,
+    c3,
+    c4,
+    eta,
+    n_steps=100,
+    rolling=True,
+    seed=42,
 ):
+    np.random.seed(seed)
     wiener = np.random.normal(size=n_steps)
     q = np.random.normal(size=n_steps)
     spot = np.zeros(shape=n_steps + 1)
@@ -88,11 +119,12 @@ def generate_spread_path(
         spreads[i] = calendar_spread(
             spot[i], T[0], T[1], k, a, l, sig, eta, c1, c2, c3, c4, q[i]
         )
-        for i, t in enumerate(list(T)):
-            if T[i] - dt >= 0:
-                T[i] -= dt
-            else:
-                T[i] = Tn[i]
+        if not rolling:
+            for i, t in enumerate(list(T)):
+                if T[i] - dt >= 0:
+                    T[i] -= dt
+                else:
+                    T[i] = Tn[i]
     return spot, spreads
 
 
@@ -102,4 +134,4 @@ def one_factor_model():
 
 if __name__ == "__main__":
     x0, alpha, lmbd, sigma, kappa, dt = 30, 0.0658, 0, 0.43, 5, 1 / 252.0
-    generate_path(x0, alpha, lmbd, sigma, kappa, dt)
+    generate_futures_path(x0, alpha, lmbd, sigma, kappa, dt)

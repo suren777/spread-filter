@@ -86,7 +86,7 @@ def generate_futures_path(
                 if T[i] - dt >= 0:
                     T[i] -= dt
                 else:
-                    T[i] = Tn[i]
+                    T[i] = Tn[i] + np.random.uniform(-3 / 252.0, 3 / 252.0)
     return spot, futures
 
 
@@ -124,7 +124,7 @@ def generate_spread_path(
                 if T[i] - dt >= 0:
                     T[i] -= dt
                 else:
-                    T[i] = Tn[i]
+                    T[i] = Tn[i] + np.random.uniform(-3 / 252.0, 3 / 252.0)
     return spot, spreads
 
 

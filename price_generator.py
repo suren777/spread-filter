@@ -76,6 +76,7 @@ def generate_futures_path(
     futures = np.zeros(shape=(n_fut, n_steps))
     spot[0] = x0
     T = np.array(Tn)
+    Ts = [T]
     for i, w in enumerate(wiener):
         spot[i + 1] = xtdt(spot[i], a, sig, k, dt, w)
         futures[:, i] = log_futures(
@@ -87,7 +88,8 @@ def generate_futures_path(
                     T[i] -= dt
                 else:
                     T[i] = Tn[i] + np.random.uniform(-3 / 252.0, 3 / 252.0)
-    return spot, futures
+        Ts.append(T)
+    return spot, futures, Ts
 
 
 def generate_spread_path(
@@ -114,6 +116,7 @@ def generate_spread_path(
     spreads = np.zeros(shape=n_steps)
     spot[0] = x0
     T = np.array(Tn)
+    Ts = [T]
     for i, w in enumerate(wiener):
         spot[i + 1] = xtdt(spot[i], a, sig, k, dt, w)
         spreads[i] = calendar_spread(
@@ -125,7 +128,8 @@ def generate_spread_path(
                     T[i] -= dt
                 else:
                     T[i] = Tn[i] + np.random.uniform(-3 / 252.0, 3 / 252.0)
-    return spot, spreads
+        Ts.append(T)
+    return spot, spreads, Ts
 
 
 def one_factor_model():

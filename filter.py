@@ -17,7 +17,7 @@ class Filter:
             self.dt,
         ) = (a, l, sig, q, k, c1, c2, c3, c4, dt)
 
-    def one_step(self, yn, xnn1, xnn, pnn1, pn1n1, T1, T2):
+    def one_step(self, yn, xnn, pn1n1, T1, T2):
         T = np.array([T1, T2])
         d1, d2 = dn(
             self.a,
@@ -30,6 +30,11 @@ class Filter:
             self.c3,
             self.c4,
         )
+        b = B(self.k, self.dt)
+        gs = g(self.a, self.k, self.dt)
+        r = R(self.sig, self.k, self.dt)
+        pnn1 = b ** 2 * pn1n1 + r ** 2
+        xnn1 = b * (xnn) + gs
         a1, a2 = An(T, self.k)
         d1a1pn1 = d1 + 0.5 * a1 ** 2 * pnn1
         d2a2pn1 = d2 + 0.5 * a2 ** 2 * pnn1
@@ -47,23 +52,14 @@ class Filter:
             + self.q ** 2
             - en1yn ** 2
         )
-        b = B(self.k, self.dt)
-        gs = g(self.a, self.k, self.dt)
-        r = R(self.sig, self.k, self.dt)
-        z1n = np.exp(a1 * (b * xnn + gs + d1))
-        z2n = np.exp(a2 * (b * xnn + gs + d2))
+        z1n = np.exp(a1 * (xnn1 + d1))
+        z2n = np.exp(a2 * (xnn1 + d2))
         zdiff = (
             z1n * np.exp(0.5 * (a1 * b) ** 2 * pn1n1 + r ** 2) * a1
             - z2n * np.exp(0.5 * (a2 * b) ** 2 * pn1n1 + r ** 2) * a2
         )
         kstar = (b ** 2 * pn1n1 * zdiff) / signn1
         # need to discuss eq 41
-        pnn = (
-            b ** 2 * pn1n1
-            + kstar ** 2 * signn1
-            - 2 * b ** 2 * kstar * pn1n1 * zdiff
-        )
-        pn1n = b ** 2 * pnn + r ** 2
-        xnn = xnn1 + kstar * vn
-        xnn1 = b * xnn + gs
-        return xnn1, xnn, pn1n, pnn
+        pnn = b ** 2 * pn1n1 + r ** 2 - (kstar ** 2) * signn1
+        xnn1 = b * (xnn1 + kstar * vn) + gs
+        return xnn1, pnn

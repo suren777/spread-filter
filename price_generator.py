@@ -112,13 +112,14 @@ def generate_spread_path(
     np.random.seed(seed)
     wiener = np.random.normal(size=n_steps)
     q = np.random.normal(size=n_steps)
-    spot = np.zeros(shape=n_steps + 1)
+    spot = np.zeros(shape=n_steps)
     spreads = np.zeros(shape=n_steps)
     spot[0] = x0
     T = np.array(Tn)
     Ts = [T]
     for i, w in enumerate(wiener):
-        spot[i + 1] = xtdt(spot[i], a, sig, k, dt, w)
+        if i > 0:
+            spot[i] = xtdt(spot[i - 1], a, sig, k, dt, w)
         spreads[i] = calendar_spread(
             spot[i], T[0], T[1], k, a, l, sig, eta, c1, c2, c3, c4, q[i]
         )

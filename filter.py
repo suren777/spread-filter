@@ -62,4 +62,4 @@ class Filter:
         # need to discuss eq 41
         pnn = b ** 2 * pn1n1 + r ** 2 - (kstar ** 2) * signn1
         xnn1 = b * (xnn1 + kstar * vn) + gs
-        return xnn1, pnn
+        return xnn1, pnn, vn

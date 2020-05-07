@@ -4,9 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from filter import Filter
 
-#%% [markdown]
-# Test Print
-# This should print out
+# %% [markdown]
 # # Simulate Calendar Spreads
 
 # Considering 2 scenarios:
@@ -38,10 +36,10 @@ price_path = generate_spread_path(
     rolling=False,
     seed=int(np.random.uniform(0, 10000)),
 )
-# %% Plot
-plt.plot(price_path[0], label="Spot Price")
-plt.legend()
-plt.show()
+# # %% Plot
+# plt.plot(price_path[0], label="Spot Price")
+# plt.legend()
+# plt.show()
 
 
 # %% Create filter
@@ -73,7 +71,8 @@ plt.legend()
 
 print("Mean:", np.round(np.mean(abs(xnn / price_path[0][:-1] - 1) * 100), 2))
 
-# %% Plot test,
+# %% [markdown]
+# # Test against previous day
 plt.hist(
     (price_path[0][:-1] / price_path[0][1:] - 1) * 100, bins=20, label="Errors"
 )
@@ -85,5 +84,3 @@ print(
         np.mean(abs(price_path[0][:-1] / price_path[0][1:] - 1) * 100), 2
     ),
 )
-
-# %%

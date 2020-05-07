@@ -45,10 +45,12 @@ def log_futures(spot, T, k, a, l, sig, eta, c1, c2, c3, c4, q_noise):
     )
 
 
-def calendar_spread(spot, T1, T2, k, a, l, sig, eta, c1, c2, c3, c4, q_noise):
+def calendar_spread(
+    spot, T1, T2, k, a, l, sig, eta, c1, c2, c3, c4, q_noise, dt
+):
     f1 = An(T1, k) * spot + dn(a, l, sig, k, T1, c1, c2, c3, c4)
     f2 = An(T2, k) * spot + dn(a, l, sig, k, T2, c1, c2, c3, c4)
-    return np.exp(f1) - np.exp(f2) + q_noise * eta
+    return np.exp(f1) - np.exp(f2) + q_noise * eta * np.sqrt(dt)
 
 
 def generate_futures_path(
@@ -80,7 +82,7 @@ def generate_futures_path(
     for i, w in enumerate(wiener):
         spot[i + 1] = xtdt(spot[i], a, sig, k, dt, w)
         futures[:, i] = log_futures(
-            spot[i], T, k, a, l, sig, eta, c1, c2, c3, c4, q[:, i]
+            spot[i], T, k, a, l, sig, eta, c1, c2, c3, c4, q[:, i], dt
         )
         if not rolling:
             for i, t in enumerate(list(T)):
@@ -121,7 +123,7 @@ def generate_spread_path(
         if i > 0:
             spot[i] = xtdt(spot[i - 1], a, sig, k, dt, w)
         spreads[i] = calendar_spread(
-            spot[i], T[0], T[1], k, a, l, sig, eta, c1, c2, c3, c4, q[i]
+            spot[i], T[0], T[1], k, a, l, sig, eta, c1, c2, c3, c4, q[i], dt
         )
         if not rolling:
             for i, t in enumerate(list(T)):

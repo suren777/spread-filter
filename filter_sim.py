@@ -14,7 +14,7 @@ from filter import Filter
 # %% Initialise variables
 x0, a, l, sig, k, dt = 1.5, 0.35, 0.05, 0.9, 0.25, 1 / 252.0
 c1, c2, c3, c4 = 1.2, 0.19, 0.1, -0.34
-q = 0.01
+q = 0.12
 n_steps = 252
 Tn = [200 / 360.0, 100.0 / 360.0 * 3]
 
@@ -89,7 +89,10 @@ print(
 )
 # %% [markdown]
 # # Futures comparison
-plt.plot(vn, label="error")
+print(
+    "Mean:", np.round(np.mean(abs(vn / price_path[1][:-1]) * 100), 2),
+)
+plt.plot(vn / price_path[1][:-1], label="error")
 
 plt.legend()
 # %%

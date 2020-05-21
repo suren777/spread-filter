@@ -17,7 +17,7 @@ class Filter:
             self.dt,
         ) = (a, l, sig, q, k, c1, c2, c3, c4, dt)
 
-    def one_step(self, yn, xnn, pn1n1, T1, T2):
+    def one_step(self, yn, xnn, pn1n1, T1, T2, T1_new, T2_new):
         T = np.array([T1, T2])
         d1, d2 = dn(
             self.a,
@@ -62,4 +62,21 @@ class Filter:
         # need to discuss eq 41
         pnn = b ** 2 * pn1n1 + r ** 2 - (kstar ** 2) * signn1
         xnn1 = b * (xnn1 + kstar * vn) + gs
-        return xnn1, pnn, vn
+
+        T = np.array([T1_new, T2_new])
+        d1, d2 = dn(
+            self.a,
+            self.l,
+            self.sig,
+            self.k,
+            T,
+            self.c1,
+            self.c2,
+            self.c3,
+            self.c4,
+        )
+        pnn1 = b ** 2 * pnn + r ** 2
+        d1a1pn1 = d1 + 0.5 * a1 ** 2 * pnn1
+        d2a2pn1 = d2 + 0.5 * a2 ** 2 * pnn1
+        en1yn = np.exp(a1 * xnn1 + d1a1pn1) - np.exp(a2 * xnn1 + d2a2pn1)
+        return xnn1, pnn, en1yn

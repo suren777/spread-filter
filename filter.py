@@ -61,7 +61,8 @@ class Filter:
         kstar = (b ** 2 * pn1n1 * zdiff) / signn1
         # need to discuss eq 41
         pnn = b ** 2 * pn1n1 + r ** 2 - (kstar ** 2) * signn1
-        xnn1 = b * (xnn1 + kstar * vn) + gs
+        xnn = xnn1 + kstar * vn
+        xnn1 = b * xnn + gs
 
         T = np.array([T1_new, T2_new])
         d1, d2 = dn(
@@ -76,6 +77,7 @@ class Filter:
             self.c4,
         )
         pnn1 = b ** 2 * pnn + r ** 2
+        a1, a2 = An(T, self.k)
         d1a1pn1 = d1 + 0.5 * a1 ** 2 * pnn1
         d2a2pn1 = d2 + 0.5 * a2 ** 2 * pnn1
         en1yn = np.exp(a1 * xnn1 + d1a1pn1) - np.exp(a2 * xnn1 + d2a2pn1)

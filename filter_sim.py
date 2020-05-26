@@ -53,13 +53,15 @@ vn = np.zeros(len(price_path[0]) - 1)
 xnn[0] = price_path[0][0]
 # %% generate fiter outputs
 for i in range(1, (len(price_path[0]) - 1)):
-    yn, T1, T2 = (
+    yn, T1, T2, T1_new, T2_new = (
         price_path[1][i],
         price_path[2][0, i],
         price_path[2][1, i],
+        price_path[2][0, i + 1],
+        price_path[2][1, i + 1],
     )
     xnn[i], pn1n1, vn[i - 1] = our_filter.one_step(
-        yn, price_path[0][i], pn1n1, T1, T2
+        yn, price_path[0][i], pn1n1, T1, T2, T1_new, T2_new
     )
     # xnn[i + 1], pn1n1 = our_filter.one_step(yn, xnn[i], pn1n1, T1, T2)
     results.append(pn1n1)

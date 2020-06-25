@@ -1,4 +1,5 @@
 import numpy as np
+from functools import lru_cache
 
 
 def seasonality_function(t, c1, c2, c3, c4):
@@ -9,6 +10,7 @@ def gaussian_noise():
     return 0
 
 
+@lru_cache(maxsize=32)
 def R(sig, k, dt):
     return sig ** 2 * 0.5 / k * (1 - np.exp(-2 * k * dt))
 
@@ -17,10 +19,12 @@ def An(T, k, t0=0):
     return np.exp(-k * (T - t0))
 
 
+@lru_cache(maxsize=32)
 def g(a, k, dt):
     return a / k * (1 - B(k, dt))
 
 
+@lru_cache(maxsize=32)
 def B(k, dt):
     return np.exp(-k * dt)
 
@@ -150,7 +154,7 @@ def generate_spread_path(
                         Ts[j, i + 1] = Ts[j, i] - dt
                     else:
                         Ts[j, i + 1] = Tn[j]
-                except:
+                except Exception:
                     pass
     return spot, spreads, Ts
 

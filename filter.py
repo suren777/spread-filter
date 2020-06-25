@@ -55,8 +55,8 @@ class Filter:
         z1n = np.exp(a1 * (xnn1 + d1))
         z2n = np.exp(a2 * (xnn1 + d2))
         zdiff = (
-            z1n * np.exp(0.5 * (a1 * b) ** 2 * pn1n1 + r ** 2) * a1
-            - z2n * np.exp(0.5 * (a2 * b) ** 2 * pn1n1 + r ** 2) * a2
+            z1n * np.exp(0.5 * (a1 * b) ** 2 * pn1n1 + a1 ** 2 * r ** 2) * a1
+            - z2n * np.exp(0.5 * (a2 * b) ** 2 * pn1n1 + a2 ** 2 * r ** 2) * a2
         )
         kstar = (b ** 2 * pn1n1 * zdiff) / signn1
         # need to discuss eq 41
